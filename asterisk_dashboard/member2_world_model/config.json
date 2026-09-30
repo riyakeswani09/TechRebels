@@ -1,0 +1,12 @@
+{
+  "lookback": 10,
+  "horizon": 5,
+  "transformer_d_model": 128,
+  "heads": 4,
+  "layers": 3,
+  "dropout": 0.15,
+  "epochs": 20,
+  "batch_size": 128,
+  "learning_rate": 0.0003,
+  "device": "auto"
+}

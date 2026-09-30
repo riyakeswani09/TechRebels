@@ -1,0 +1,13 @@
+{
+  "BENIGN": 0,
+  "Bot": 1,
+  "DDoS": 2,
+  "DoS Hulk": 3,
+  "DoS slowloris": 4,
+  "FTP-Patator": 5,
+  "Infiltration": 6,
+  "PortScan": 7,
+  "SSH-Patator": 8,
+  "Web Attack - Brute Force": 9,
+  "Web Attack - XSS": 10
+}

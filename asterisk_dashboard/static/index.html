@@ -1,0 +1,128 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Attack Forecast Console – Team Asterisk</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b121a;--panel:#131d28;--p2:#182635;--ink:#e6edf3;--mute:#8fa1b1;--line:#243444;--low:#2fb37a;--med:#e0a10c;--high:#e5483d;--acc:#4da3ff}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(1200px 500px at 70% -10%,#12283d,var(--bg));background-attachment:fixed;color:var(--ink);font:15px/1.5 "IBM Plex Sans",system-ui,sans-serif}
+header{padding:16px 28px;display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-bottom:1px solid var(--line)}
+h1{font:600 22px "IBM Plex Serif",serif;margin:0}.sub,.note{color:var(--mute);font-size:12.5px}
+.live{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--mute)}.live i{width:9px;height:9px;border-radius:50%;background:var(--mute)}.live.on i{background:var(--low);animation:pulse 1.2s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 #2fb37a99}100%{box-shadow:0 0 0 9px #2fb37a00}}
+main{max-width:1200px;margin:0 auto;padding:18px 28px 48px;display:grid;gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:16px}
+h2{font-size:13px;font-weight:600;margin:0 0 10px;color:var(--mute);letter-spacing:.3px}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}@media(max-width:800px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi b{display:block;font:600 28px "IBM Plex Serif",serif;transition:color .3s}.kpi span{font-size:12px;color:var(--mute)}
+#strip{position:relative;display:flex;height:40px;gap:1px;cursor:pointer;align-items:stretch}
+#strip i{flex:1;min-width:1px;opacity:.28;transition:opacity .3s,transform .2s}#strip i.seen{opacity:1}#strip i.on{outline:2px solid #fff;z-index:1;transform:scaleY(1.25)}
+.bar{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+button,select{font:inherit;background:var(--acc);color:#04121f;font-weight:600;border:0;border-radius:5px;padding:6px 14px;cursor:pointer;transition:transform .1s,filter .2s}
+button:hover{filter:brightness(1.15)}button:active{transform:scale(.96)}button.g,select{background:transparent;color:var(--ink);border:1px solid var(--line);font-weight:500}
+button:focus-visible,#strip:focus-visible{outline:3px solid var(--med)}
+#banner{display:flex;gap:22px;align-items:center;flex-wrap:wrap;border-left:8px solid var(--low);transition:border-color .4s,box-shadow .4s}
+#banner.MEDIUM,#banner.HIGH{animation:glow 1.4s infinite}
+@keyframes glow{50%{box-shadow:0 0 22px -4px var(--rc)}}
+#banner b.big{font:600 30px "IBM Plex Serif",serif;transition:color .3s}.pill{padding:2px 12px;border-radius:99px;color:#04121f;font-weight:700;font-size:13px;transition:background .4s}
+.warn{padding:10px 12px;background:var(--p2);border-radius:6px;font-size:14px;flex:1;min-width:260px}
+.ladder{display:flex;gap:4px}.st{flex:1;padding:10px 6px;text-align:center;font-size:12.5px;background:var(--p2);border:1px solid var(--line);min-height:58px;border-radius:4px;transition:all .4s}
+.st.cur{border-color:var(--acc);box-shadow:inset 0 0 0 1px var(--acc)}.st.pred{background:var(--acc);color:#04121f;font-weight:600;transform:translateY(-3px)}.st small{display:block;font-size:11px;opacity:.85}
+.grid{display:grid;grid-template-columns:1.1fr 1fr;gap:16px}@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.row{display:grid;grid-template-columns:170px 1fr 44px;gap:8px;align-items:center;font-size:13px;margin:6px 0}
+.trk{background:var(--p2);height:10px;border-radius:5px;overflow:hidden}.trk div{height:100%;width:0;background:linear-gradient(90deg,#2b6cb0,var(--acc));border-radius:5px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.row span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+ul{margin:6px 0;padding-left:18px}li{margin:3px 0;animation:in .4s both}@keyframes in{from{opacity:0;transform:translateY(4px)}}
+svg text{fill:var(--mute);font-size:11px}#curve path,#curve polyline,#curve circle{transition:all .5s}
+.t{font-size:12px;padding:1px 8px;border:1px solid var(--line);border-radius:3px;margin-right:6px}
+#feed{max-height:230px;overflow:auto;font-size:13px}.ev{display:grid;grid-template-columns:70px 1fr 70px 80px;gap:8px;padding:5px 4px;border-bottom:1px solid var(--line);animation:in .4s both}
+.ok{color:var(--low)}.bad{color:var(--high)}.mid{color:var(--med)}
+kbd{border:1px solid var(--line);border-radius:3px;padding:0 5px;font-size:11px}
+</style></head><body>
+<header><h1>Attack Forecast Console</h1><span class="sub">Team Asterisk · PS-SIH26093 · AI-based network attack forecasting</span>
+<span class="live" id="live" style="margin-left:auto"><i></i><span id="meta">connecting…</span></span></header>
+<main>
+<div class="kpis">
+<div class="card kpi"><b id="k1">0</b><span>Windows scanned</span></div>
+<div class="card kpi"><b id="k2">0</b><span>Attack windows seen (actual)</span></div>
+<div class="card kpi"><b id="k3">–</b><span>Attacks caught by forecast</span></div>
+<div class="card kpi"><b id="k4">0</b><span>False alarms</span></div></div>
+
+<section class="card"><h2>TRAFFIC WINDOWS (TEST SET) · colour = stage in the next window · dim = not yet scanned</h2>
+<div id="strip" tabindex="0" role="slider" aria-label="Select traffic window"></div>
+<div class="bar"><button id="play">▶ Play</button><button class="g" id="prev">‹ Prev</button><button class="g" id="next">Next ›</button>
+<button class="g" id="jump">⚡ Next attack</button>
+<select id="spd" aria-label="Speed"><option value="1400">Slow</option><option value="800" selected>Normal</option><option value="300">Fast</option></select>
+<span id="pos" class="note"></span><span class="note" style="margin-left:auto"><kbd>←</kbd> <kbd>→</kbd> step · <kbd>Space</kbd> play</span></div>
+<div id="legend" class="note" style="margin-top:8px"></div></section>
+
+<section class="card" id="banner"><div><div class="note">Forecast</div><b class="big" id="pstage">–</b></div>
+<div><div class="note">Risk</div><span class="pill" id="risk">–</span></div>
+<div><div class="note">Confidence</div><b id="conf" style="font:600 26px 'IBM Plex Serif',serif">–</b></div>
+<div class="warn" id="warn"></div></section>
+
+<section class="card"><h2>KILL-CHAIN POSITION · outlined = current · lit = forecast</h2><div class="ladder" id="ladder"></div>
+<div class="note" style="margin-top:8px">Transition check: <span id="trans"></span></div></section>
+
+<div class="grid">
+<section class="card"><h2>ATTACK PROBABILITY · NEXT 5 WINDOWS</h2><svg id="curve" viewBox="0 0 460 190" width="100%" role="img" aria-label="Attack probability forecast"></svg>
+<h2 style="margin-top:12px">STAGE PROBABILITIES</h2><div id="probs"></div></section>
+<section class="card"><h2>WHY THIS FORECAST</h2><div id="feat"></div><ul id="reasons"></ul>
+<h2 style="margin-top:12px">RECOMMENDED ACTIONS</h2><ul id="acts"></ul><div class="note" id="method"></div></section></div>
+
+<section class="card"><h2>LIVE EVENT FEED</h2><div class="ev note"><span>Window</span><span>Forecast → actual</span><span>Risk</span><span>Result</span></div><div id="feed"></div></section>
+</main>
+<script>
+const $=id=>document.getElementById(id),Q=s=>document.querySelectorAll(s);
+const C={Benign:"#5f7385",Reconnaissance:"#4da3ff","Initial Access":"#e0a10c","Lateral Movement":"#e8742a","Command & Control":"#d6457a","Exfiltration":"#b02a2a","Other attack (unmapped)":"#9a7be0"};
+const RC={LOW:"#2fb37a",MEDIUM:"#e0a10c",HIGH:"#e5483d"},nm=s=>s==="Benign"?"Normal":s;
+let cur=0,N=0,timer=null,STAGES=[],cache={},seen=new Set(),S={tp:0,fn:0,fp:0},TL=[],busy=false;
+const j=async u=>(await fetch(u)).json();
+const get=async i=>cache[i]||(cache[i]=await j("/api/predict/"+i));
+function count(el,to,suf=""){const from=parseFloat(el.dataset.v||0);el.dataset.v=to;const t0=performance.now();
+ (function f(t){const p=Math.min(1,(t-t0)/500);el.textContent=Math.round(from+(to-from)*p)+suf;if(p<1)requestAnimationFrame(f)})(t0)}
+async function init(){const m=await j("/api/meta");TL=await j("/api/timeline");N=m.n;STAGES=m.stages;
+ $("meta").textContent=`${m.world_model} · ${m.explain}`;
+ $("strip").innerHTML=TL.map(x=>`<i data-i="${x.i}" style="background:${C[x.stage]||"#999"}" title="#${x.i+1} ${x.truth}"></i>`).join("");
+ $("legend").innerHTML=Object.keys(C).filter(k=>TL.some(x=>x.stage==k)).map(k=>`<span style="color:${C[k]}">■</span> ${nm(k)}`).join(" &nbsp; ");
+ $("ladder").innerHTML=["Benign",...STAGES].map(s=>`<div class="st" data-s="${s}">${nm(s)}<small></small></div>`).join("");
+ $("strip").onclick=e=>{if(e.target.dataset.i!=null)go(+e.target.dataset.i)};
+ addEventListener("keydown",e=>{if(e.key=="ArrowRight")go(cur+1);if(e.key=="ArrowLeft")go(cur-1);if(e.key==" "&&e.target.tagName!="BUTTON"){e.preventDefault();toggle()}});
+ $("next").onclick=()=>go(cur+1);$("prev").onclick=()=>go(cur-1);$("play").onclick=toggle;
+ $("jump").onclick=()=>{const n=TL.findIndex(x=>x.i>cur&&x.truth!=="BENIGN");go(n<0?0:n)};
+ $("spd").onchange=()=>{if(timer){toggle();toggle()}};
+ go(0)}
+function toggle(){if(timer){clearInterval(timer);timer=null;$("play").textContent="▶ Play";$("live").classList.remove("on")}
+ else{$("play").textContent="⏸ Pause";$("live").classList.add("on");timer=setInterval(()=>go((cur+1)%N),+$("spd").value)}}
+const bar=(k,v)=>`<div class="row"><span title="${k}">${nm(k)}</span><div class="trk"><div data-w="${Math.min(100,v*100)}"></div></div><span>${(v*100).toFixed(0)}%</span></div>`;
+async function go(i){if(busy)return;busy=true;try{cur=Math.max(0,Math.min(N-1,i));const r=await get(cur);
+ for(let k=1;k<=3;k++)if(cur+k<N)get(cur+k);
+ const first=!seen.has(cur);seen.add(cur);
+ const actual=r.truth.some(t=>t!=="BENIGN"),pred=r.predicted!=="Benign";
+ if(first){if(actual&&pred)S.tp++;else if(actual)S.fn++;else if(pred)S.fp++;feed(r,actual,pred)}
+ Q("#strip i.on").forEach(e=>e.classList.remove("on"));seen.forEach(k=>$("strip").children[k].classList.add("seen"));
+ const el=$("strip").children[cur];el.classList.add("on");
+ $("pos").textContent=`Window ${cur+1}/${N} · actual next: ${r.truth.join(", ")}`;
+ count($("k1"),seen.size);count($("k2"),S.tp+S.fn);count($("k4"),S.fp);
+ $("k3").textContent=(S.tp+S.fn)?`${S.tp}/${S.tp+S.fn}`:"–";
+ const col=RC[r.risk]||"#8fa1b1";$("banner").className="card "+r.risk;$("banner").style.borderLeftColor=col;$("banner").style.setProperty("--rc",col);
+ $("pstage").textContent=nm(r.predicted);$("pstage").style.color=C[r.predicted]||"";$("risk").textContent=r.risk;$("risk").style.background=col;
+ count($("conf"),Math.round(r.confidence*100),"%");
+ const e=r.explanation;$("warn").textContent=e.warning;
+ Q(".st").forEach(s=>{const c=s.dataset.s==r.current,p=s.dataset.s==r.predicted;s.classList.toggle("cur",c);s.classList.toggle("pred",p);s.querySelector("small").textContent=(c?"current ":"")+(p?"forecast":"")});
+ $("trans").innerHTML=(r.transitions.length?r.transitions:["none"]).map(t=>`<span class="t">${t.replaceAll("_"," ").toLowerCase()}</span>`).join("")+(r.distance!=null?` stage distance ${r.distance}`:"");
+ $("probs").innerHTML=Object.entries(r.stage_probs).filter(([,v])=>v>0.005).sort((a,b)=>b[1]-a[1]).map(([k,v])=>bar(k,v)).join("");
+ $("feat").innerHTML=e.top_features.map(([k,v])=>bar(k,v)).join("");
+ $("reasons").innerHTML=e.reasons.map(x=>`<li>${x}</li>`).join("");$("acts").innerHTML=e.actions.map(x=>`<li>${x}</li>`).join("");
+ $("method").textContent="Method: "+e.method;curve(r.attack_curve);
+ requestAnimationFrame(()=>Q(".trk div").forEach(d=>d.style.width=d.dataset.w+"%"))}finally{busy=false}}
+function feed(r,actual,pred){const res=actual&&pred?["caught","ok"]:actual?["missed","bad"]:pred?["false alarm","mid"]:["clear","ok"];
+ const d=document.createElement("div");d.className="ev";
+ d.innerHTML=`<span>#${r.i+1}</span><span>${nm(r.predicted)} → ${actual?r.truth.find(t=>t!=="BENIGN"):"Normal"}</span><span style="color:${RC[r.risk]}">${r.risk}</span><span class="${res[1]}">${res[0]}</span>`;
+ $("feed").prepend(d);while($("feed").children.length>40)$("feed").lastChild.remove()}
+function curve(p){const x=i=>50+i*90,y=v=>160-v*130,pts=p.map((v,i)=>x(i)+","+y(v)).join(" ");
+ let s=`<defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4da3ff" stop-opacity=".45"/><stop offset="1" stop-color="#4da3ff" stop-opacity="0"/></linearGradient></defs>`;
+ s+=[0,.5,1].map(v=>`<line x1="40" x2="450" y1="${y(v)}" y2="${y(v)}" stroke="var(--line)"/><text x="6" y="${y(v)+4}">${v*100}%</text>`).join("");
+ s+=`<polygon fill="url(#g)" points="${x(0)},160 ${pts} ${x(p.length-1)},160"/><polyline fill="none" stroke="var(--acc)" stroke-width="2.5" points="${pts}"/>`;
+ s+=p.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="4.5" fill="var(--acc)"/><text x="${x(i)-14}" y="${y(v)-10}">${(v*100).toFixed(0)}%</text><text x="${x(i)-9}" y="180">t+${i+1}</text>`).join("");
+ $("curve").innerHTML=s}
+init();
+</script></body></html>

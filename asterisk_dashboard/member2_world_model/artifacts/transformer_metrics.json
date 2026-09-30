@@ -1,0 +1,114 @@
+{
+  "evaluation_protocol": {
+    "train_fraction_per_dataset": 0.7,
+    "test_fraction_per_dataset": 0.3,
+    "datasets": [
+      "CIC-IDS2017",
+      "synthetic-2018-development"
+    ],
+    "packet_features": [
+      "packet_count",
+      "packet_ttl_mean",
+      "packet_ttl_std",
+      "tcp_window_mean",
+      "tcp_window_std",
+      "payload_len_mean",
+      "payload_len_std",
+      "packet_retransmission_rate",
+      "unique_src_ports",
+      "unique_dst_ports"
+    ],
+    "note": "Synthetic packet and synthetic-2018 results are development-only."
+  },
+  "validation": {
+    "best_loss": 0.19556863605976105
+  },
+  "cic2017_horizon_1": {
+    "precision": 0.9818181818181818,
+    "recall": 0.9818181818181818,
+    "f1": 0.9818181818181818,
+    "fpr": 0.006932409012131715,
+    "support": {
+      "benign": 577,
+      "attack": 220
+    },
+    "roc_auc": 0.9890814558058926
+  },
+  "cic2017_horizon_3": {
+    "precision": 0.9454545454545454,
+    "recall": 0.9454545454545454,
+    "f1": 0.9454545454545454,
+    "fpr": 0.02079722703639515,
+    "support": {
+      "benign": 577,
+      "attack": 220
+    },
+    "roc_auc": 0.9667008035292264
+  },
+  "cic2017_horizon_5": {
+    "precision": 0.9090909090909091,
+    "recall": 0.9090909090909091,
+    "f1": 0.9090909090909091,
+    "fpr": 0.03466204506065858,
+    "support": {
+      "benign": 577,
+      "attack": 220
+    },
+    "roc_auc": 0.9439183866393572
+  },
+  "synthetic2018_horizon_1": {
+    "precision": 0.9523809523809523,
+    "recall": 0.9523809523809523,
+    "f1": 0.9523809523809523,
+    "fpr": 0.006430868167202572,
+    "support": {
+      "benign": 622,
+      "attack": 84
+    },
+    "roc_auc": 0.9702380952380952
+  },
+  "synthetic2018_horizon_3": {
+    "precision": 0.8571428571428571,
+    "recall": 0.8571428571428571,
+    "f1": 0.8571428571428571,
+    "fpr": 0.01929260450160772,
+    "support": {
+      "benign": 622,
+      "attack": 84
+    },
+    "roc_auc": 0.9050298576022049
+  },
+  "synthetic2018_horizon_5": {
+    "precision": 0.7857142857142857,
+    "recall": 0.7857142857142857,
+    "f1": 0.7857142857142857,
+    "fpr": 0.028938906752411574,
+    "support": {
+      "benign": 622,
+      "attack": 84
+    },
+    "roc_auc": 0.8580424131067218
+  },
+  "logistic_baseline_cic2017_horizon_1": {
+    "precision": 0.9818181818181818,
+    "recall": 0.9818181818181818,
+    "f1": 0.9818181818181818,
+    "fpr": 0.006932409012131715,
+    "support": {
+      "benign": 577,
+      "attack": 220
+    },
+    "roc_auc": 0.9911375452969907
+  },
+  "logistic_baseline_synthetic2018_horizon_1": {
+    "precision": 0.898876404494382,
+    "recall": 0.9523809523809523,
+    "f1": 0.9248554913294796,
+    "fpr": 0.014469453376205787,
+    "support": {
+      "benign": 622,
+      "attack": 84
+    },
+    "roc_auc": 0.9650512938294289
+  }
+}
